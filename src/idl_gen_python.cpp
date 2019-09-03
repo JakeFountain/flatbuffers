@@ -265,7 +265,7 @@ class PythonGenerator : public BaseGenerator {
       code += "x = self._tab.Indirect(o + self._tab.Pos)\n";
     }
     code += Indent + Indent + Indent;
-    code += "from ." + TypeName(field) + " import " + TypeName(field) + "\n";
+    code += "from " + FullyQualifiedTypeName(field) + " import " + TypeName(field) + "\n";
     code += Indent + Indent + Indent + "obj = " + TypeName(field) + "()\n";
     code += Indent + Indent + Indent + "obj.Init(self._tab.Bytes, x)\n";
     code += Indent + Indent + Indent + "return obj\n";
@@ -735,6 +735,10 @@ class PythonGenerator : public BaseGenerator {
 
   std::string TypeName(const FieldDef &field) {
     return GenTypeGet(field.value.type);
+  }  
+
+  std::string FullyQualifiedTypeName(const FieldDef &field) {
+    return field.value.type.struct_def->defined_namespace->GetFullyQualifiedName(field.value.type.struct_def->name);
   }
 
   // Create a struct with a builder and the struct's arguments.
