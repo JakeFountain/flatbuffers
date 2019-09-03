@@ -738,7 +738,14 @@ class PythonGenerator : public BaseGenerator {
   }  
 
   std::string FullyQualifiedTypeName(const FieldDef &field) {
-    return field.value.type.struct_def->defined_namespace->GetFullyQualifiedName(field.value.type.struct_def->name);
+    const Type& t = field.value.type;
+    if(IsScalar(t.base_type)){
+      return GenTypeBasic(t);
+    } else if(t.base_type == BASE_TYPE_STRUCT) {
+      return t.struct_def->defined_namespace->GetFullyQualifiedName(t.struct_def->name);
+    } else {
+      return GenTypePointer(t);
+    }
   }
 
   // Create a struct with a builder and the struct's arguments.
